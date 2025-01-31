@@ -39,7 +39,7 @@ real(dp) function V_centrifugal(r, l) ! , effective_mass)
     REAL(dp), INTENT(in) :: r ! , effective_mass
     INTEGER, INTENT(in) :: l
 
-    V_centrifugal = - l * (l+1) / r**2.0_dp 
+    V_centrifugal = hbar ** 2 * (DBLE(l) * DBLE(l+1)) / r**2.0_dp 
     ! hbar ** 2 / (2 * effective_mass) *
 
 end function V_centrifugal
@@ -56,9 +56,9 @@ real(dp) function V_SO(r, l, j, N, Z, isospin)! effective_mass, N, Z)
         V0 = 0.44 * (51 - 33 * (N-Z)/(N+Z))
     endif
     
-    V_SO = -2 * effective_mass / hbar ** 2 * r0 ** 2 * &
+    V_SO = -2 * effective_mass * r0 ** 2 * &
     (-1) * exp(t) / a / (1 + exp(t)) ** 2 / r * &
-    (j * (j+1) - l * (l+1) - 3.0_dp/4.0_dp) * V0 ! Constant
+    (j * (j+1) - l * (l+1) - 3.0_dp/4.0_dp) * V0 / 2.0_dp ! Constant
 
 end FUNCTION V_SO
 
