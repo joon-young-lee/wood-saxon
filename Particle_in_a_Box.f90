@@ -15,7 +15,7 @@ program Shrodinger
 ! Numerov method
 ! (1 + h**2/12 * v(x+h)) * f(x+h) = 2 * (1-5*h**2/12 * v(x))*f(x)
 ! - (1+h**2/12 * v(x-h)) * f(x-h)
-    integer(8) :: n, i, ii, iii, Node, Node_count, unit_number
+    integer(8) :: n, i, ii, Node, Node_count, unit_number
     real(dp), allocatable :: psi(:)
     real(dp) :: v, E_trial, E_up, E_down, a1, a2, a3, SUM, rand_num
     n = int(a/h) + 1
