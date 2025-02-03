@@ -168,10 +168,10 @@ subroutine WS_shooting(h, R_max, radial_quantum_number, l, j, isospin, &
 
         print *, ' '
         write (*, "(A, i4)") "Trial: ", ii
-        write (*, "(A, i2)") "Total Nodes: ", Node_count
+        ! write (*, "(A, i2)") "Total Nodes: ", Node_count
         ! print *, "PSI(N)", psi(n)
-        write (*, "(f25.10, A)") ABS(E_up - E_down), " Up Down Difference"
-        write (*, "(A, f15.10)") "E_trial = ", E_trial
+        ! write (*, "(f25.10, A)") ABS(E_up - E_down), " Up Down Difference"
+        write (*, "(A, f15.7)") "E_trial = ", E_trial
     
     enddo
     
@@ -180,9 +180,16 @@ subroutine WS_shooting(h, R_max, radial_quantum_number, l, j, isospin, &
     write (*, "(A, i3)") "A: ", N+Z
     write (*, "(A, i3)") "N: ", N
     write (*, "(A, i3)") "Z: ", Z
-    write (*, "(A, i1)") "Radial Quantum Number: ", radial_quantum_number-1
+    write (*, "(A, i1)") "Radial Quantum Number: ", radial_quantum_number
     write (*, "(A, i1)") "L: ", l
     write (*, "(A, f3.1)") "J: ", j
+    
+    if (isospin == 1) then
+        write (*, "(A, f3.1)") "Proton"
+    elseif (isospin == -1) then
+        write (*, "(A, f3.1)") "Neutron"
+    endif
+
     E = E_trial
     write (*, "(A, f10.5, A)") "State Energy: ", E, "MeV"
     write (*, "(A)") "----------------------------"

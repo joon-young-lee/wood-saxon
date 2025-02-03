@@ -5,9 +5,12 @@ program wood_saxon
     implicit none
     character(len=100) :: line
     character(len=50) :: filename
+    character(len=50) :: dir
+    character(len=50) :: particle
+    character(len=50) :: output_file_name
     real(dp), parameter :: h = 1.e-3_dp ! fm, mesh
     real(dp), parameter :: R_max = 10.0_dp ! Maximum
-    INTEGER(8) :: i, ii, num, &
+    INTEGER(8) :: i, ii, iii, num, &
     l, N, Z, isospin, unit_number, &
     radial_quantum_number, node_count, &
     num_entries, io_status
@@ -49,7 +52,7 @@ program wood_saxon
     print *, "Number of stable nuclei found: ", num_entries
 
     ! Allocate arrays dynamically based on count
-    allocate(Z_array(num_entries), N_array(num_entries),&
+    ALLOCATE(Z_array(num_entries), N_array(num_entries),&
      A_array(num_entries), E_array(num_entries))
     
     ! Read data into arrays
@@ -81,41 +84,61 @@ program wood_saxon
     ! N = 0, 1, 2
     ! l = N, N-2,..., 1 or 0
     ! k = (N-l)/2
-    radial_quantum_number = 1 ! n = k + 1 (number of nodes)
-    N = 8
-    Z = 8
-    l = 0
-    j = 1.0_dp/2.0_dp
-    isospin = 1
+    ! output_file_name = "neutron/Neutron_k=1,l=1,j=0.5.txt"
+    ! output_file_name = "Proton/Proton_k=1,l=1,j=0.5.txt"
     E_up = 100.0_dp
     E_down = -1.e6_dp
-    ! CALL WS_shooting(h, R_max, &
-    !     radial_quantum_number, l, j, isospin, &
-    !     N, Z, E_up, E_down, E)
-    do i = 1, num_entries, 10
-        E_up = 100.0_dp
-        E_down = -1.e6_dp
-        CALL WS_shooting(h, R_max, &
-        radial_quantum_number, l, j, isospin, &
-        N_array(i), Z_array(i), E_up, E_down, E)
-        E_array(i) = E
+    radial_quantum_number = 2 ! n = k + 1 (number of nodes)
     
+    do l = 1, 5, 1
+        j = DBLE(l) - 1.0_dp/2.0_dp
+        do ii = 1, 2
+            isospin = -1
+            do iii = 1, 2    
+                if (isospin == 1) then
+                    dir = "Proton/"
+                    particle = "Proton"
+                elseif (isospin == -1) then
+                    particle = "Neutron"
+                    dir = "Neutron/"
+                endif
+
+                write(output_file_name, '(A,A,A,I1,A,I1,A,F3.1,A)') &
+                trim(dir), trim(particle), &
+                "_k=", radial_quantum_number, ",l=", l, ",j=", j, ".txt"
+                do i = 1, num_entries, 5
+                    E_up = 100.0_dp
+                    E_down = -1.e6_dp
+                    CALL WS_shooting(h, R_max, &
+                    radial_quantum_number, l, j, isospin, &
+                    N_array(i), Z_array(i), E_up, E_down, E)
+                    E_array(i) = E
+                
+                enddo
+                unit_number = 20
+                
+                open(unit_number, file=output_file_name,&
+                status="unknown", action="write")
+
+                ! Write header to the file
+                write(unit_number, '(A)') "A [N+Z]    E_n [MeV]"
+
+                ! Write data into two columns
+                do i = 1, num_entries
+                    write(unit_number, '(I5, F15.7)') &
+                    A_array(i), E_array(i)
+                end do
+
+                ! Close the file
+                close(unit_number)
+                isospin = isospin + 2
+            enddo
+            j = j + 1.0_dp
+        enddo
     enddo
-    unit_number = 20
-    open(unit_number, file="k=0,l=0,j=0.5.txt",&
-     status="unknown", action="write")
 
-    ! Write header to the file
-    write(unit_number, '(A)') "r [fm]    Potential [MeV]"
+    DEALLOCATE(A_array, N_array, Z_array, E_array)
 
-    ! Write data into two columns
-    do i = 1, num_entries
-        write(unit_number, '(I5, F15.7)') &
-        A_array(i), E_array(i)
-    end do
 
-    ! Close the file
-    close(unit_number)
-    DEALLOCATE(Z_array, N_array, A_array, E_array)
 end program
 
