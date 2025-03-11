@@ -4,7 +4,7 @@ module Potentials
     real(dp), parameter :: hbar = 6.58211899_dp * 1.e-22_dp ! MeV * s
     real(dp), parameter :: c = 299792458 * 1.e15 ! fm/s
     real(dp), parameter :: m_n = 938.272013 / c ** 2 ! MeV/c^2
-    real(dp), parameter :: alpha = 1.0_dp/137.036_dp ! hbar ** 2 / 2m
+    real(dp), parameter :: alpha = 1.0_dp/137.036_dp ! fine structure constant
     real(dp), parameter :: a = 0.67_dp ! fm
     real(dp), parameter :: pi = 3.141592_dp
     real(dp), parameter :: r0 = 1.27_dp ! fm
@@ -45,6 +45,7 @@ real(dp) function V_centrifugal(r, l) ! , effective_mass)
 
 end function V_centrifugal
 
+
 real(dp) function V_SO(r, l, j, N, Z, isospin)! effective_mass, N, Z)
     REAL(dp), INTENT(in) :: r, j
     INTEGER(8), INTENT(in) :: l, N, Z, isospin
@@ -80,7 +81,7 @@ REAL(dp) FUNCTION V_C(r , N, Z, isospin)
             V_C = Z * e2 / r
         endif
     else
-        print*, "Invalid Isosplin!"
+        print*, "Invalid Isospin!"
     
     endif
     end FUNCTION V_C
@@ -88,13 +89,14 @@ REAL(dp) FUNCTION V_C(r , N, Z, isospin)
 
 ! length in fm, energy in MeV
 subroutine WS_shooting(h, R_max, radial_quantum_number, l, j, isospin, &
-                        N, Z, E_up, E_down, E)
+N, Z, E_up, E_down, E, r_array, u)
     INTEGER(8), INTENT(in) :: l, radial_quantum_number, isospin, N, Z
     REAL(dp), INTENT(in) :: h, R_max, j
     REAL(DP), INTENT(inout) :: E_up, E_down
     INTEGER(8) :: num, i, ii, Node_count
     REAL(dp) :: vx, vx_next, vx_back, E_trial,  a1, a2, a3
-    REAL(dp), ALLOCATABLE :: r_array(:), u(:)
+    REAL(dp), ALLOCATABLE, INTENT(out) :: r_array(:), u(:)
+    ! REAL(dp), ALLOCATABLE, INTENT(out) :: u(:)
     REAL(dp), INTENT(out) :: E
 
     num = int(R_max/h) + 1
@@ -104,9 +106,9 @@ subroutine WS_shooting(h, R_max, radial_quantum_number, l, j, isospin, &
     do i = 2, num, 1
         r_array(i) = DBLE(i-1) * h
     enddo
-    r_array(1) = 1.e-7_dp
+    r_array(1) = 1.e-18_dp
     u(1) = 0.0_dp
-    u(2) = 1.e-10_dp
+    u(2) = 1.e-18_dp
 
     do ii = 1, 1000
         
@@ -193,7 +195,10 @@ subroutine WS_shooting(h, R_max, radial_quantum_number, l, j, isospin, &
     E = E_trial
     write (*, "(A, f10.5, A)") "State Energy: ", E, "MeV"
     write (*, "(A)") "----------------------------"
-    DEALLOCATE(r_array, u)
+    
+    
+    
+    ! DEALLOCATE(r_array) !, u)
     
 
 

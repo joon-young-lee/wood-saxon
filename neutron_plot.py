@@ -3,9 +3,9 @@ import numpy as np
 plt.rcParams["figure.dpi"] = 200
 plt.rcParams["font.family"] = "Times New Roman"
 
-k = 1
-l = 5
-j = 5.5
+k = 3
+l = 3
+j = 3.5
 
 particle = "Neutron"
 
@@ -64,4 +64,4 @@ plt.legend(fontsize = 20)
 #print(j)
 plt.grid()
 plt.savefig(f"{particle}/{particle}_{k}{L}{j:.1f}.png")
-# plt.show()
+plt.show()

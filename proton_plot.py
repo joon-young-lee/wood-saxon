@@ -2,9 +2,9 @@ import matplotlib.pyplot as plt
 import numpy as np
 plt.rcParams["figure.dpi"] = 200
 plt.rcParams["font.family"] = "Times New Roman"
-k = 1
-l = 5
-j = 5.5
+k = 3
+l = 2
+j = 1.5
 particle = "Proton"
 
 data1 = np.loadtxt(f'{particle}/{particle}_k={k},l={l},j={j:.1f}.txt', skiprows=1)
